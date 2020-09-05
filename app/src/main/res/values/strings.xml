@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">My ECG</string>
+    <string name="ver">Ver: ERROR</string>
+    <string name="Title">Мой ЭКГ</string>
+    <string name="Start">Начать</string>
+    <string name="Setting">Настройки</string>
+    <string name="Exit">Выход</string>
+    <string name="title_img">TITLE_IMG</string>
+</resources>
