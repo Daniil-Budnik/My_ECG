@@ -22,9 +22,9 @@ void CNTR(int CM){
 
 // Выполнение команды
 void ALG(){
-  if(ECG && FPG){ _ECG(); delay(250); _FPG(); delay(250);} 
-  else if(ECG){_ECG(); delay(500);}
-  else if(FPG){_FPG(); delay(500);}
+  if(ECG && FPG){ _ECG(); delay(20); _FPG(); delay(2050);} 
+  else if(ECG){_ECG(); delay(40);}
+  else if(FPG){_FPG(); delay(40);}
   }
 
 char N_ECG = 50; // Значение ЭКГ

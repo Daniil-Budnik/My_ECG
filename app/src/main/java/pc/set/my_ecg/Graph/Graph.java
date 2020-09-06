@@ -29,7 +29,7 @@ public class Graph {
     private boolean Active_Channel_2 = true;
 
     // Масштаб графика по Y
-    private int BeginY = 0, End_Y = 240;
+    private int BeginY = 0, End_Y = 255;
 
     // Смена цвета графиков
     private int

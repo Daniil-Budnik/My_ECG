@@ -575,19 +575,9 @@ public class Begin_Main extends AppCompatActivity {
             }
         }
 
-        // Обновление интерфейса при удачном подключении
-        @Override
-        protected void onProgressUpdate(Object[] values) {
-            super.onProgressUpdate(values);
-            if (UPD) {
-                UpDate_Info();
-                UPD = false;
-            } else {
-
-
-            }
-
-        }
+        int X_CORD = 0;
+        int AVAILABLE = 0;
+        int DATA_GRAPG[] = new int[200];
 
 
         // Тестовый сигнал
@@ -611,18 +601,39 @@ public class Begin_Main extends AppCompatActivity {
             }
         }
 
+        private boolean Grid_Enable = false;
+
+        // Обновление интерфейса при удачном подключении
+        @Override
+        protected void onProgressUpdate(Object[] values) {
+            super.onProgressUpdate(values);
+            Grid_Enable = true;
+            if (UPD) {
+                UpDate_Info();
+                UPD = false;
+            } else {
+                for (int i = 0; i < AVAILABLE; i++) {
+                    GRAPH.append_channel_1(X_CORD, 50);
+                    X_CORD++;
+                    Log.e("DATA", String.valueOf(X_CORD) + " " + String.valueOf(DATA_GRAPG[i]));
+                }
+
+            }
+            Grid_Enable = false;
+        }
 
         private void _READ_BLUETOOTH() {
-
             try {
-                int GG = BL_INPUT.available();
-
-                if (GG > 0) {
-                    for (int i = 0; i < GG; i++) {
-
+                if (!Grid_Enable) {
+                    AVAILABLE = BL_INPUT.available();
+                    //Log.e("AV",String.valueOf(AVAILABLE));
+                    if (AVAILABLE > 0) {
+                        for (int i = 0; i < AVAILABLE; i++) {
+                            DATA_GRAPG[i] = BL_INPUT.read();
+                        }
                     }
-
                 }
+
 
                 publishProgress();
 
