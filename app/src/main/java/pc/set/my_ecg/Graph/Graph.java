@@ -1,6 +1,5 @@
 package pc.set.my_ecg.Graph;
 
-
 import android.graphics.Color;
 import android.view.View;
 
@@ -14,30 +13,37 @@ import com.github.mikephil.charting.data.LineDataSet;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class Graph {
 
     private LineChart GRAPH; // Объект графв
-    private List<Entry> Data_1, Data_2; // Массивы данных
     private LineDataSet Channel_1, Channel_2; // Графики
     private LineData Line_Data; // Хранение данных о графиках
+
+    public List<Entry> Data_1, Data_2; // Массивы данных
+
     // Название каналов
     private String Name_Graph_1 = "ЭКГ", Name_Graph_2 = "ФПГ";
+
     // Включение второго канала
     private boolean Active_Channel_2 = true;
+
     // Масштаб графика по Y
     private int BeginY = 0, End_Y = 240;
+
     // Смена цвета графиков
     private int
             Color_Channel_1 = android.graphics.Color.argb(255, 0, 255, 0),
             Color_Channel_2 = android.graphics.Color.argb(255, 255, 255, 0);
+
     private float Point_Long = 150; // Максимальная длина по X
     private int Point_List = 0;     // Счётчик листов
+
     // Направляющие
     private XAxis XA;
     private YAxis YAL, YAR;
+
     private int FinalPoint = 0; // Последняя активная страница с графиком
-    // Поток для работы в реальном времени
-    private RealTimeGraph RealTime;
 
     // Конструктор
     public Graph(View viewById) {
@@ -230,23 +236,6 @@ public class Graph {
         GRAPH.invalidate();
     }
 
-    // Запуск потока
-    public void AsyncStart() {
-        Data_1 = new ArrayList<>();
-        Data_2 = new ArrayList<>();
 
-        RealTime = new RealTimeGraph(this);
-        RealTime.execute();
-    }
-
-    // Установка паузы
-    public void AsyncPause(boolean Pause) {
-        RealTime.setPause(Pause);
-    }
-
-    // Остановка потока
-    public void AsyncStop() {
-        RealTime.Close();
-    }
 }
 

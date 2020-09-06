@@ -39,7 +39,7 @@ public class DebugMessage {
     // Сообщение в строке состояния
     public void setMessage(String MESSAGE) {
         TXT.setText(MESSAGE);
-        TXT.setTextColor(Color.WHITE);
+        TXT.setTextColor(Color.GREEN);
     }
 
     // Реализация сообщения предуприждения
@@ -59,10 +59,5 @@ public class DebugMessage {
 
         AL_Builder.create().show();
     }
-
-    // Пустой метод
-    public void NO_MOVE() {
-    }
-
 
 }
