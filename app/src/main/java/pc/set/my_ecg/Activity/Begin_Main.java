@@ -80,21 +80,10 @@ public class Begin_Main extends AppCompatActivity {
     // Необходимые счётчики для выбора Bluetooth устройства
     private int _N_Device = 0, _ID_Device = 0, _ID_Connect = 0;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.begin);
-
-        ViewFind(); // Подключение объектов экрана View
-        ButtonActive(); // Действие кнопок
-
-        // Предуприждение об Alpha версии
-        ME_DEBUG.WARN(Begin_Main.this,
-                "Alpha версия",
-                "Данное программное обеспечение находится в статусе alpha тестирования. " +
-                        "Приложение создано для демонстрации и может содержать ошибки...");
-
-    }
+    // Временая линия
+    private int X_Time_1 = 0, X_Time_2 = 0, X_Step = 1;
+    private InputStream BL_INPUT;
+    private OutputStream BL_OUTPUT;
 
     // Сокет для подключения
     private BluetoothSocket BL_Socket;
@@ -170,8 +159,7 @@ public class Begin_Main extends AppCompatActivity {
         }
     }
 
-    private InputStream BL_INPUT;
-    private OutputStream BL_OUTPUT;
+
     private Connected_Bluetooth Connected_BL;
 
     // Подключение объектов экрана View
@@ -229,6 +217,37 @@ public class Begin_Main extends AppCompatActivity {
         B_Zoom = findViewById(R.id.B_Zoom);
     }
 
+    // Таймер
+    private Thread thread;
+    private boolean PW_Thread = false;
+    private int PT = 1;
+    private Graph_Read_Bluetooth Graph_Read;
+
+    // Тестовый сигнал
+    private void TEST_SIN_SIGNAL() {
+        for (int i = 0; i < 100000; i += 1) {
+            GRAPH.append_channel_1(i, (float) Math.sin(((float) i / 10) * Math.PI) * 10 + 100);
+            GRAPH.append_channel_2(i, (float) Math.sin(((float) i / 10) * Math.PI) * 15 + 200);
+        }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.begin);
+
+        ViewFind(); // Подключение объектов экрана View
+        ButtonActive(); // Действие кнопок
+        TIMERS(true); // Запуск потока для работы с графиком
+
+        // Предуприждение об Alpha версии
+        ME_DEBUG.WARN(Begin_Main.this,
+                "Alpha версия",
+                "Данное программное обеспечение находится в статусе alpha тестирования. " +
+                        "Приложение создано для демонстрации и может содержать ошибки...");
+
+    }
+
     // События при нажатии
     private void ButtonActive() {
 
@@ -282,6 +301,10 @@ public class Begin_Main extends AppCompatActivity {
                     GRAPH.Data_1 = new ArrayList<>();
                     GRAPH.Data_2 = new ArrayList<>();
 
+                    X_Time_1 = 0;
+                    X_Time_2 = 0;
+                    B_Clear.performClick();
+
                     // Команда
                     try {
                         BL_OUTPUT.write(3);
@@ -312,9 +335,9 @@ public class Begin_Main extends AppCompatActivity {
         B_Pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (PW_Start && PW_Pause) {
+                if (PW_Start && !PW_Pause) {
                     B_Pause.setText("Продолжить");
-                    PW_Pause = false;
+                    PW_Pause = true;
 
                     try {
                         BL_OUTPUT.write(0);
@@ -322,11 +345,10 @@ public class Begin_Main extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
-                } else if (PW_Start && !PW_Pause) {
+                } else if (PW_Start && PW_Pause) {
                     B_Pause.setText("Пауза");
-                    PW_Pause = true;
+                    PW_Pause = false;
 
-                    // Команда
                     try {
                         BL_OUTPUT.write(3);
                     } catch (IOException e) {
@@ -374,6 +396,7 @@ public class Begin_Main extends AppCompatActivity {
                             Connected_BL = new Connected_Bluetooth();
                             Connected_BL.execute();
 
+
                         }
 
                         // Если сокет не создался
@@ -386,7 +409,7 @@ public class Begin_Main extends AppCompatActivity {
                     else {
                         PW_Bluetooth = false;
                         T_BL_Status.setText("Статус: соединение разорвано...");
-                        Connected_BL.cancel();
+                        Cancel();
                         B_Bl_Connect.setText("Подключиться");
                     }
 
@@ -394,7 +417,7 @@ public class Begin_Main extends AppCompatActivity {
 
                 // Сбой в работе Bluetooth
                 else {
-                    Connected_BL.cancel();
+                    Cancel();
                     B_Bl_Connect.setText("Подключиться");
                     ME_DEBUG.WARN(Begin_Main.this,
                             "Bluetooth выключен",
@@ -497,9 +520,52 @@ public class Begin_Main extends AppCompatActivity {
 
     }
 
-    private class Connected_Bluetooth extends AsyncTask {
+    // Отключение
+    public void Cancel() {
+        try {
+            BL_Socket.close();
+            BL_Enable = false;
+        } catch (IOException e) {
+            Log.e("ERROR: ", "Socket - don't close...");
+        }
+    }
 
-        private boolean UPD = true;
+    // Реализация главного таймера
+    public void TIMERS(Boolean x) {
+        thread = new Thread() {
+            @Override
+            public void run() {
+                while (!isInterrupted()) {
+                    try {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                TimeUpdater();
+                            }
+                        });
+                        Thread.sleep(25);
+                    } catch (InterruptedException e) {
+                        Log.println(Log.ASSERT, "ERROR", "_________________ TIMER WTF???");
+                    }
+                }
+            }
+        };
+        thread.setDaemon(true);
+        thread.setPriority(10);
+        if (x) {
+            thread.start();
+        }
+    }
+
+    private void TimeUpdater() {
+        if (PW_Start && !PW_Pause && !PW_Thread) {
+            PW_Thread = true;
+            Graph_Read = new Graph_Read_Bluetooth();
+            Graph_Read.execute();
+        }
+    }
+
+    public class Connected_Bluetooth extends AsyncTask {
 
         // Подключение
         @Override
@@ -512,39 +578,27 @@ public class Begin_Main extends AppCompatActivity {
                 BL_Socket.connect();
                 BL_OUTPUT = BL_Socket.getOutputStream();
                 BL_INPUT = BL_Socket.getInputStream();
+
                 BL_Enable = true;
 
                 // Обновление интерфейса
                 publishProgress();
-
-
-                // Работа с графиком в Real Time
-                while (BL_Enable) {
-                    if (PW_Start && !PW_Pause) {
-                        _READ_BLUETOOTH();
-                    } else {
-
-                    }
-                }
-
-                TEST_SIN_SIGNAL();
-
-
             }
-
 
             // Не удачное подключение
             catch (IOException connectException) {
+
                 // Невозможно соединиться. Закрываем сокет и выходим.
                 Log.e("ERROR: ", "Bluetooth Socket and Device - Unable to connect...");
                 BL_Enable = false;
-                cancel();
+                Cancel();
             }
-
             return null;
         }
 
-        public void UpDate_Info() {
+        @Override
+        protected void onPostExecute(Object o) {
+            super.onPostExecute(o);
             // Если подключению ничего не помешало
             if (BL_Enable) {
                 _ID_Connect = _ID_Device;
@@ -563,9 +617,6 @@ public class Begin_Main extends AppCompatActivity {
                 B_Bl_Connect.setText("Отключиться");
                 PW_Bluetooth = true;
 
-                // Чистка графика
-                GRAPH.Clear();
-                GRAPH.show();
             }
 
             // Если подключение оборвалось
@@ -574,76 +625,55 @@ public class Begin_Main extends AppCompatActivity {
                 PW_Bluetooth = false;
             }
         }
+    }
 
-        int X_CORD = 0;
-        int AVAILABLE = 0;
-        int DATA_GRAPG[] = new int[200];
+    private class Graph_Read_Bluetooth extends AsyncTask {
 
 
-        // Тестовый сигнал
-        private void TEST_SIN_SIGNAL() {
-            for (int i = 0; i < 100000; i += 1) {
-                GRAPH.append_channel_1(i, (float) Math.sin(((float) i / 10) * Math.PI) * 10 + 100);
-                GRAPH.append_channel_2(i, (float) Math.sin(((float) i / 10) * Math.PI) * 15 + 200);
-            }
-        }
+        private int AV = 0, YC = 0;
 
-        // Отключение
-        public void cancel() {
-            try {
-                BL_Socket.close();
-                BL_AddDevice = false;
-                BL_Enable = false;
-                PW_Bluetooth = false;
-                UPD = true;
-            } catch (IOException e) {
-                Log.e("ERROR: ", "Socket - don't close...");
-            }
-        }
-
-        private boolean Grid_Enable = false;
-
-        // Обновление интерфейса при удачном подключении
         @Override
-        protected void onProgressUpdate(Object[] values) {
-            super.onProgressUpdate(values);
-            Grid_Enable = true;
-            if (UPD) {
-                UpDate_Info();
-                UPD = false;
-            } else {
-                for (int i = 0; i < AVAILABLE; i++) {
-                    GRAPH.append_channel_1(X_CORD, 50);
-                    X_CORD++;
-                    Log.e("DATA", String.valueOf(X_CORD) + " " + String.valueOf(DATA_GRAPG[i]));
-                }
-
-            }
-            Grid_Enable = false;
-        }
-
-        private void _READ_BLUETOOTH() {
+        protected void onPreExecute() {
+            super.onPreExecute();
             try {
-                if (!Grid_Enable) {
-                    AVAILABLE = BL_INPUT.available();
-                    //Log.e("AV",String.valueOf(AVAILABLE));
-                    if (AVAILABLE > 0) {
-                        for (int i = 0; i < AVAILABLE; i++) {
-                            DATA_GRAPG[i] = BL_INPUT.read();
-                        }
-                    }
-                }
-
-
-                publishProgress();
-
+                AV = BL_INPUT.available();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            for (int i = 0; i < AV; i++) {
+                try {
+                    YC = (int) ((char) BL_INPUT.read());
 
+                    if (PT == 1) {
+                        GRAPH.append_channel_1(X_Time_1, YC);
+                        X_Time_1++;
+                        PT = 2;
+                    } else if (PT == 2) {
+                        GRAPH.append_channel_2(X_Time_2, YC);
+                        X_Time_2++;
+                        PT = 1;
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            super.onPostExecute(o);
+            GRAPH.show();
+            PW_Thread = false;
+        }
     }
+
+
 
 
 }

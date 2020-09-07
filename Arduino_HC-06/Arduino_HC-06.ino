@@ -20,22 +20,25 @@ void CNTR(int CM){
   }
 }
 
-// Выполнение команды
-void ALG(){
-  if(ECG && FPG){ _ECG(); delay(20); _FPG(); delay(2050);} 
-  else if(ECG){_ECG(); delay(40);}
-  else if(FPG){_FPG(); delay(40);}
-  }
-
-char N_ECG = 50; // Значение ЭКГ
+char N_ECG = 200; // Значение ЭКГ
 char N_FGP = 150; // Значение ФПГ
 
+// Выполнение команды
+void ALG(){
+  if(ECG && FPG){ _ECG(); delay(20); _FPG(); delay(20);} 
+  else if(ECG){_ECG(); delay(40);}
+  else if(FPG){_FPG(); delay(40);}
+  
+  }
+
+
+
 // Работа ЭКГ
-void _ECG(){ Serial.print(N_ECG); }
+void _ECG(){ Serial.write(N_ECG); }
 
 
 // Работа ФПГ
-void _FPG(){ Serial.print(N_FGP); }
+void _FPG(){ Serial.write(N_FGP); }
 
 
   

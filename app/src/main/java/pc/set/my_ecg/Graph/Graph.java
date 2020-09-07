@@ -217,6 +217,7 @@ public class Graph {
         }
     }
 
+
     // Показать график
     public void show() {
         Channel_1 = new LineDataSet(Data_1, Name_Graph_1);
