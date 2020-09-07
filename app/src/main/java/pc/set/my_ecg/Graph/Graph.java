@@ -34,7 +34,7 @@ public class Graph {
     // Смена цвета графиков
     private int
             Color_Channel_1 = android.graphics.Color.argb(255, 0, 255, 0),
-            Color_Channel_2 = android.graphics.Color.argb(255, 255, 255, 0);
+            Color_Channel_2 = android.graphics.Color.argb(255, 0, 0, 255);
 
     private float Point_Long = 150; // Максимальная длина по X
     private int Point_List = 0;     // Счётчик листов

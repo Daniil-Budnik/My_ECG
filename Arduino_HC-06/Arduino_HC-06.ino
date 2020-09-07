@@ -20,9 +20,6 @@ void CNTR(int CM){
   }
 }
 
-char N_ECG = 200; // Значение ЭКГ
-char N_FGP = 150; // Значение ФПГ
-
 // Выполнение команды
 void ALG(){
   if(ECG && FPG){ _ECG(); delay(20); _FPG(); delay(20);} 
@@ -31,14 +28,30 @@ void ALG(){
   
   }
 
+char N_ECG = 200; // Значение ЭКГ
 
+float XX = 0; 
 
 // Работа ЭКГ
-void _ECG(){ Serial.write(N_ECG); }
+void _ECG(){ Serial.write((char)(sin(XX * 3.14)* 20 + 200));   XX += 0.1;}
+ 
 
+char N_FPG = 40; // Значение ФПГ
+char Low = 40, High = 120;
+bool Step = true;
 
 // Работа ФПГ
-void _FPG(){ Serial.write(N_FGP); }
+void _FPG(){ 
+  if(Step){
+      N_FPG += 2;
+      if(N_FPG >= High){Step = false;}
+    }
+   else{
+      N_FPG -= 2;
+      if(N_FPG <= Low){Step = true;}
+    }
+  Serial.write(N_FPG); 
+  }
 
 
   
