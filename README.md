@@ -27,7 +27,13 @@
 
 # Обзор программы
 
-![alt tag](https://github.com/PC-SET/My_ECG/JPG//1.jpg?raw=true "Главное меню")​
+![alt tag](https://github.com/PC-SET/My_ECG/blob/master/JPG/1.jpg?raw=true "Главное меню")​
+
+![alt tag](https://github.com/PC-SET/My_ECG/blob/master/JPG/2.jpg?raw=true "1")​
+
+![alt tag](https://github.com/PC-SET/My_ECG/blob/master/JPG/3.jpg?raw=true "2")​
+
+![alt tag](https://github.com/PC-SET/My_ECG/blob/master/JPG/4.jpg?raw=true "3")​
 
 # Задача
 
