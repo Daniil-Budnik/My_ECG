@@ -27,13 +27,17 @@
 
 # Обзор программы
 
+Главное меню программы:
 ![alt tag](https://github.com/PC-SET/My_ECG/blob/master/JPG/1.jpg?raw=true "Главное меню")​
 
-![alt tag](https://github.com/PC-SET/My_ECG/blob/master/JPG/2.jpg?raw=true "1")​
+Рабочее окно программы:
+![alt tag](https://github.com/PC-SET/My_ECG/blob/master/JPG/2.jpg?raw=true "Рабочее окно")​
 
-![alt tag](https://github.com/PC-SET/My_ECG/blob/master/JPG/3.jpg?raw=true "2")​
+Окно выбора Bluetooth устройства:
+![alt tag](https://github.com/PC-SET/My_ECG/blob/master/JPG/3.jpg?raw=true "Bluetooth")​
 
-![alt tag](https://github.com/PC-SET/My_ECG/blob/master/JPG/4.jpg?raw=true "3")​
+Пример отрисовки графиков в двухкональном режиме:
+![alt tag](https://github.com/PC-SET/My_ECG/blob/master/JPG/4.jpg?raw=true "Графики")​
 
 # Задача
 
