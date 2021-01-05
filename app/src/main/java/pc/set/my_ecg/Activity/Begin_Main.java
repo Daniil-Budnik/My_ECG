@@ -177,7 +177,7 @@ public class Begin_Main extends AppCompatActivity {
         GRAPH = new Graph(findViewById(R.id.Graph));
 
         // Длина развёртки графика
-        GRAPH.setPointLong(150);
+        GRAPH.setPointLong(1000);
 
         // Строка состояния
         T_Status = findViewById(R.id.T_Status);

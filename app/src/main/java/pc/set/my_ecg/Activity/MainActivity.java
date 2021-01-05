@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         VER = findViewById(R.id.T_Ver);
-        VER.setText("Ver: alpha 0.1.2 (21.08.2020)");
+        VER.setText("Ver: alpha 0.1.3 (04.01.2021)");
 
         B_Start = findViewById(R.id.B_Start);
         B_Setting = findViewById(R.id.B_Setting);
